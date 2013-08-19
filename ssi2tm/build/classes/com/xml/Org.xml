@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap      
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="XT_User">
+	<select id="selectorg" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+	<![CDATA[
+		select ORGCODE, ORGNAME, LEVEL,SXSJ, SHXSJ from db2admin.t_org where father=#father#
+	]]>
+	</select>
+	<insert id="insertorg" parameterClass="java.util.HashMap">
+	<![CDATA[
+		INSERT INTO db2admin.t_org(
+				ORGCODE,
+				ORGNAME,
+				LEVEL,
+				DESC,
+				FATHER,
+				SXSJ,
+				SHXSJ
+			) VALUES (
+				#ORGCODE#,
+				#ORGNAME#,
+				#LEVEL#,
+				#DESC#,
+				#FATHER#,
+				#SXSJ#,
+				#SHXSJ#
+			)
+	]]>
+	</insert>
+	<delete id="deleteorg" parameterClass="java.lang.String">
+	<![CDATA[
+		DELETE FROM db2admin.t_org WHERE ORGCODE IN($ids$)
+	]]>
+	</delete>
+	<select id="selectdetail" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+	<![CDATA[
+		select t2.ORGCODE AS FATHER,t2.orgname as fathername, t1.ORGCODE, t1.ORGCODE AS ID,
+		t1.ORGNAME, t1.LEVEL,t1.SXSJ, t1.SHXSJ,t1.desc from db2admin.t_org t1 
+		JOIN db2admin.t_org t2 on t1.father=t2.orgcode where t1.ORGCODE=#ORGCODE#
+	]]>
+	</select>
+	<update id="updateorg" parameterClass="java.util.HashMap">
+	<![CDATA[
+		update db2admin.t_org 
+				set ORGCODE=#ORGCODE#,
+				ORGNAME=#ORGNAME#,
+				LEVEL=#LEVEL#,
+				DESC=#DESC#,
+				FATHER=#FATHER#,
+				SXSJ=#SXSJ#,
+				SHXSJ=#SHXSJ#
+				where orgcode=#ID#
+				
+	]]>
+	</update>
+</sqlMap>

@@ -1,0 +1,48 @@
+﻿Ext.ns("qxkz");
+function showButton(items, fn) {
+	if (arguments.length == 0) {
+		return;
+	}
+	var gndm = "";
+	for ( var i = 0; i < items.length; i++) {
+		if (items[i].functionID) {
+			var fnId = items[i].functionID;
+			if (gndm.indexOf(fnId) == '-1') {
+				gndm += "'" + fnId + "',";
+			}
+			items[i].disable();
+		}
+	}
+	gndm = gndm.substring(0, gndm.length - 1);
+	Ext.Ajax
+			.request( {
+				url : "/gdjg/XT_YHJS.do",
+				method : 'POST',
+				async : false, // 默认为true异步提交，false为同步提交
+				params : {
+					action : 'queryRole',
+					gndm : gndm,
+					yhxl : ies.user.yh.dlm
+				},
+				success : function(response, options) {
+					var text = response.responseText.trim();
+					var responseObject = eval("(" + text + ")");
+					if (responseObject.exception != true) {
+						for ( var i = 0; i < responseObject.list.length; i++) {
+							for ( var j = 0; j < items.length; j++) {
+								if (responseObject.list[i]["GNDM"] == items[j].functionID) {
+									items[j].enable();
+								}
+							}
+						}
+						if (fn) {
+							try {
+								fn();
+							} catch (e) {
+								alert('回调失败');
+							}
+						}
+					}
+				}
+			});
+};
